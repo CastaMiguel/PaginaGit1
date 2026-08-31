@@ -7,13 +7,13 @@ on:
 
 jobs:
   validate-html:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout del código
-      uses: actions/checkout@v3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
 
-    - name: Verificar index.html
-      run: test -f index.html && echo "El archivo index.html existe"
+      - name: Verificar index.html
+        run: test -f index.html && echo "El archivo index.html existe"
 
   validate-css:
     runs-on: ubuntu-latest
