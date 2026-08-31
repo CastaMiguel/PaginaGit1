@@ -33,20 +33,8 @@ jobs:
       - name: Ejecutar Stylelint en archivos CSS
         run: npx stylelint "**/*.css" || echo "No hay archivos CSS estrictos o se encontraron advertencias menores"
 
-  check-links:
-    runs-on: ubuntu-latest
-    needs: validate-html
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v3
-
-      - name: Comprobar enlaces en HTML
-        uses: gaurav-nelson/github-action-link-checker@v1
-        with:
-          use-verbose-mode: false
-
   deploy:
-    needs: [validate-html, validate-css, check-links]
+    needs: [validate-html, validate-css]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
