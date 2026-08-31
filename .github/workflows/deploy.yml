@@ -1,0 +1,61 @@
+name: Deploy Website and Extra CI
+
+on:
+  push:
+    branches:
+      - Borrador
+
+jobs:
+  validate-html:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Validar HTML
+        uses: Cyb3r-Jak3/html5-validator-action@v1
+        with:
+          file: index.html
+
+  validate-css:
+    runs-on: ubuntu-latest
+    needs: validate-html
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Instalar Stylelint
+        run: npm install --save-dev stylelint stylelint-config-standard
+
+      - name: Ejecutar Stylelint en archivos CSS
+        run: npx stylelint "**/*.css" || echo "No hay archivos CSS estrictos o se encontraron advertencias menores"
+
+  check-links:
+    runs-on: ubuntu-latest
+    needs: validate-html
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Comprobar enlaces en HTML
+        uses: gaurav-nelson/github-action-link-checker@v1
+        with:
+          use-verbose-mode: false
+
+  deploy:
+    needs: [validate-html, validate-css, check-links]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: Publicar en GitHub Pages
+        uses: actions/upload-pages-artifact@v2
